@@ -1,0 +1,35 @@
+ansible testserver -m ping
+
+ansible testserver -a uptime
+ansible testserver -a "tail /var/log/dmesg"
+
+# -b provides root user
+testserver -b -a "tail /var/log/syslog"
+
+#install a package (nginx)
+ansible testserver -b -m apt -a name=nginx
+
+#does apt-get update and install a package
+ansible testserver -b -m apt -a name="nginx update_cache=yes"
+
+#restart a service
+ansible testserver -b -m service -a "name=nginx state=restarted"
+
+#run a playbook
+ansible-playbook web-notls.yml
+
+#Playbook run as sudo
+become: True
+
+#You can start running a playbook in the middle with 
+ansible-playbook web-notls.yml --start-at-task <task name>
+
+#Quoting is necessary:
+
+command: {{ myapp }} -a foo ==> command: "{{ myapp }} -a foo"
+
+#Also if contains a colon:
+
+debug: msg="The debug module will print a message: neat, eh?" ==> debug: "msg=The debug module will print a message: neat, eh?"
+
+#handler is similar to a task, but it runs only if it has been notified by a task
